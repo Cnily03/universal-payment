@@ -79,8 +79,11 @@ module.exports = {
         }),
         new MiniCssExtractPlugin(), // 单独提取 CSS
         // new InlineChunkHtmlPlugin(HtmlWebpackPlugin, [/\.(js)$/]) // Inline JS
+    ].concat(IS_DEV ? [ // 仅在开发环境
+
+    ] : [ // 仅在生产环境
         new FontSpiderPlugin()
-    ],
+    ]),
 
     optimization: {
         minimize: true,
