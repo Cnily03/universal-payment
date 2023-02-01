@@ -1,0 +1,38 @@
+name: Deploy
+
+on:
+  push:
+    branches: ['master']
+
+jobs:
+  build-deploy:
+    runs-on: 'ubuntu-latest'
+
+    steps:
+      - name: Use Node.js 16.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+
+      - uses: actions/checkout@v3
+
+      - name: Dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: copy CNAME
+        run: cp CNAME ./dist
+
+      - name: Deploy Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          personal_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: ./dist
+          commit_message: Deploy Pages
+          keep_files: false
+          force_orphan: true
+          user_name: github-actions[bot]
+          user_email: github-actions[bot]@users.noreply.github.com
