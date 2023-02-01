@@ -14,6 +14,7 @@ export namespace Box {
     export const registerDefaultOpt = (options: BoxUtilSetParams) => {
         DEFAULT_OPTIONS = options
     }
+
     export class QRCode extends DefaultPreventedRecord {
         static DOM: HTMLElement;
         private static OPTIONS: QRCodeRenderersOptions = {
@@ -115,10 +116,12 @@ export namespace Box {
         static DOM: HTMLElement;
     }
 
-    export function set(params: BoxUtilSetParams, setPreventDefault = true, detectPreventDefault = false) {
-        if (params.qrcode && (!detectPreventDefault || !Box.QRCode.isDefaultPrevented())) {
-            Box.QRCode.set(params.qrcode)
-            if (setPreventDefault) Box.QRCode.preventDefault()
+    export function set(params: BoxUtilSetParams, setPreventDefault = true, detectPreventDefault = false, noQRCodeRender = false) {
+        if (!noQRCodeRender) {
+            if (params.qrcode && (!detectPreventDefault || !Box.QRCode.isDefaultPrevented())) {
+                Box.QRCode.set(params.qrcode)
+                if (setPreventDefault) Box.QRCode.preventDefault()
+            }
         }
         if ((params.qrcode_alt || params.qrcode_alt == "") && (!detectPreventDefault || !Box.QRCode.Alt.isDefaultPrevented())) {
             Box.QRCode.Alt.set(params.qrcode_alt)
@@ -156,6 +159,9 @@ export namespace Box {
 
     export const setDefault = (setPreventDefault = false, detectPreventDefault = true) =>
         Box.set(DEFAULT_OPTIONS, setPreventDefault, detectPreventDefault)
+
+    export const setDefaultWithoutQRCode = (setPreventDefault = false, detectPreventDefault = true) =>
+        Box.set(DEFAULT_OPTIONS, setPreventDefault, detectPreventDefault, true)
 }
 
 export type BoxUtilSetParams = {

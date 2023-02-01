@@ -27,6 +27,7 @@ export const renderBox = (isAtPlatform = false) => {
         var s_node = node("select", platform)
         Box.Select.DOM.appendChild(s_node)
         Box.Select.DOM.appendChild(textNode())
+        // ClickEvent
         s_node.addEventListener("click", function () {
             if (this.classList.contains("active")) { // click to vanish
                 this.classList.remove("active")
@@ -38,8 +39,9 @@ export const renderBox = (isAtPlatform = false) => {
                     e.classList.remove("active")
                 this.classList.add("active")
                 setTimeout(() => {
+                    Box.setDefaultWithoutQRCode(false, false)
                     redirect(IS_MOBILE ? "mobile-select" : "pc-select", platform)
-                }, IS_MOBILE ? 10 : 250)
+                }, IS_MOBILE ? 10 : 0)
             }
         })
     }

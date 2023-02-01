@@ -55,8 +55,8 @@ var setOptions: BoxUtilSetParams = {
 Box.registerDefaultOpt(setOptions)
 
 
-if (AUTO || URL_PARAMS.platform) {
-    if (typeof PLATFORM == "string") redirect('at-platform', PLATFORM)
+if (AUTO) {
+    if (URL_PARAMS.platform && typeof PLATFORM == "string") redirect('at-platform', PLATFORM)
 }
 
 document.addEventListener("DOMContentLoaded", function () {

@@ -1,7 +1,6 @@
 import { PlatformType, PageConfigType } from "./components/declaration";
 import { Box } from "./components/box-util";
-// const BASE_URL = window.location.origin + window.location.pathname
-const BASE_URL = "http://192.168.1.100:5555/"
+const BASE_URL = window.location.origin + window.location.pathname
 
 
 
@@ -57,24 +56,14 @@ export namespace PCSelectClickEvent {
     export const Alipay = "https://qr.alipay.com/fkx107738tlkf2dmserum29"
     export const WeChat = function (platform: PlatformType) {
         Box.set({
-            title: "请使用微信扫码支付",
-            text: "",
             qrcode: BASE_URL + "?platform=WeChat",
-            qrcode_alt: platform,
-            icon: [],
-            logo: [],
-            select: ["WeChat"]
+            qrcode_alt: platform
         })
     }
     export const QQ = function (platform: PlatformType) {
         Box.set({
-            title: "请使用 QQ 扫码支付",
-            text: "",
             qrcode: BASE_URL + "?platform=QQ",
-            qrcode_alt: platform,
-            icon: [],
-            logo: [],
-            select: [platform]
+            qrcode_alt: platform
         })
     };
 }
