@@ -1,0 +1,13 @@
+// 不同平台的支付图标
+$icon-map: (
+    "Alipay": url(@/icon/Alipay.svg),
+    "WeChat": url(@/icon/WeChatPay.svg),
+    "QQ": url(@/icon/QQPay.svg)
+);
+
+// 不同平台的支付名称
+$icon-name: (
+    "Alipay": "支付宝",
+    "WeChat": "微信支付",
+    "QQ": "QQ 支付"
+);
