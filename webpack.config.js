@@ -5,7 +5,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const TerserWebpackPlugin = require("terser-webpack-plugin");
-const FontminPlugin = require('fontmin-webpack')
+const FontSpiderPlugin = require('font-spider-webpack-plugin')
 // const InlineChunkHtmlPlugin = require('react-dev-utils/InlineChunkHtmlPlugin');
 
 const StyleLoader = MiniCssExtractPlugin.loader || 'style-loader';
@@ -59,7 +59,7 @@ module.exports = {
             test: /\.(ttf|eot|woff2?)$/,
             type: 'asset',
             generator: {
-                filename: 'font/[name][ext][query]'
+                filename: '[name][ext][query]'
             },
             parser: {
                 dataUrlCondition: {
@@ -79,14 +79,7 @@ module.exports = {
         }),
         new MiniCssExtractPlugin(), // 单独提取 CSS
         // new InlineChunkHtmlPlugin(HtmlWebpackPlugin, [/\.(js)$/]) // Inline JS
-        new FontminPlugin({
-            autodetect: true, // 自动从CSS中获取Unicode字符
-            glyphs: [], // 额外包括的字符
-            // note: these settings are mutually exclusive and allowedFilesRegex has priority over skippedFilesRegex
-            allowedFilesRegex: null, // RegExp to only target specific fonts by their names
-            skippedFilesRegex: null, // RegExp to skip specific fonts by their names
-            textRegex: /\.(jsx?|tsx?|css|s[ac]ss|html)$/ // RegExp for searching text reference
-        })
+        new FontSpiderPlugin()
     ],
 
     optimization: {

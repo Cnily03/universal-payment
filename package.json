@@ -15,7 +15,7 @@
     "css-loader": "^6.7.3",
     "css-minimizer-webpack-plugin": "^4.2.2",
     "font-spider": "^1.3.5",
-    "fontmin-webpack": "^4.0.0",
+    "font-spider-webpack-plugin": "^1.0.2",
     "html-webpack-plugin": "^5.5.0",
     "mini-css-extract-plugin": "^2.7.2",
     "node-sass": "^8.0.0",
