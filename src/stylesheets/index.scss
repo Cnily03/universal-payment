@@ -1,0 +1,256 @@
+@import "./config.scss";
+@import "../icon/icon.scss";
+
+@mixin icon {
+    @each $class in map-keys($icon-map) {
+        &.icon-#{$class} {
+            background-image: map-get($icon-map, #{$class});
+        }
+    }
+}
+@mixin icon-before {
+    @each $class in map-keys($icon-map) {
+        &.icon-#{$class}::before {
+            background-image: map-get($icon-map, #{$class});
+        }
+    }
+}
+@mixin icon-name {
+    @each $class in map-keys($icon-name) {
+        &.icon-#{$class}::after {
+            content: map-get($icon-name, #{$class});
+        }
+    }
+}
+
+@font-face {
+    font-family: "HYQiHei";
+    src: url(@/fonts/HYQiHei-55S.woff) format("woff");
+}
+
+html {
+    font-size: Min(3.33vw, 16px);
+    --inner-height: 100vh;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: $background-color;
+    min-height: var(--inner-height);
+}
+
+* {
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.view-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    max-width: 480px;
+    min-height: var(--inner-height);
+    margin: 0 auto;
+    text-align: center;
+    overflow: hidden;
+}
+
+.theme-color-1 {
+    background-color: $theme-color-1;
+    color: $font-color-1;
+}
+
+.theme-color-2 {
+    background-color: $theme-color-2;
+    color: $font-color-2;
+}
+
+.container {
+    display: block;
+    position: relative;
+    z-index: 5;
+    width: 100%;
+    max-width: 480px;
+    height: max-content;
+    margin: 0 auto;
+    text-align: center;
+    overflow: hidden;
+
+    .color-box {
+        display: block;
+        box-sizing: border-box;
+        width: 100%;
+        height: max-content;
+        padding: 0 1rem;
+        text-align: center;
+        overflow: hidden;
+    }
+
+    .box {
+        $box-margin: 1.5rem;
+        display: block;
+        width: 100%;
+        height: max-content;
+        margin: $box-margin auto;
+        &.hidden {
+            display: none;
+        }
+
+        &.title-box {
+            font-size: $title-font-size;
+        }
+
+        &.qr-box {
+            max-width: 80%;
+            img {
+                width: 100%;
+                image-rendering: pixelated;
+            }
+        }
+
+        &.text-box {
+            font-size: $text-font-size;
+        }
+
+        &.icon-box {
+            $line-padding: 1rem;
+            margin-top: -$line-padding;
+            letter-spacing: 1.5rem;
+            .icon {
+                $width: 3.5rem;
+                display: none;
+                min-width: $width;
+                width: $width;
+                height: $width;
+                margin-top: $line-padding;
+                background-position: center center;
+                background-repeat: no-repeat;
+                background-size: contain;
+                &.display {
+                    display: inline-block;
+                }
+                @include icon;
+            }
+        }
+
+        &.logo-box {
+            $line-padding: 1rem;
+            margin-top: -$line-padding;
+            font-family: HYQiHei, Microsoft YaHei UI, -apple-system, system-ui;
+            .logo {
+                display: none;
+                width: max-content;
+                min-height: max-content;
+                margin: 0 1rem;
+                margin-top: $line-padding;
+                font-size: $logo-font-size;
+                color: $logo-font-color;
+                &.display {
+                    display: inline-block;
+                }
+                &::before {
+                    $width: 3.5rem;
+                    content: "";
+                    min-width: $width;
+                    width: $width;
+                    height: $width;
+                    display: table-cell;
+                    vertical-align: middle;
+                    background-position: center center;
+                    background-repeat: no-repeat;
+                    background-size: contain;
+                }
+                &::after {
+                    display: table-cell;
+                    vertical-align: middle;
+                    width: max-content;
+                    padding-left: 1rem;
+                }
+                @include icon-before;
+                @include icon-name;
+            }
+        }
+
+        &.select-box {
+            font-family: HYQiHei, Microsoft YaHei UI, -apple-system, system-ui;
+            .select {
+                $border-width: 1.5px;
+                display: none;
+                box-sizing: border-box;
+                position: relative;
+                z-index: 10;
+                width: 100%;
+                min-height: max-content;
+                flex-wrap: nowrap;
+                align-items: center;
+                justify-content: center;
+                border-radius: 0.35rem;
+                border: $border-width $select-border-color solid;
+                margin: 0 auto;
+                margin-top: -$border-width;
+                font-size: $select-font-size;
+                color: $select-font-color;
+                cursor: pointer;
+                transition: border-color ease-in-out 0.25s;
+
+                &:not(:hover):not(:active):not(.active) {
+                    animation: vanish 0.25s ease-in-out;
+                    @keyframes vanish {
+                        0% {
+                            position: relative;
+                            z-index: 11;
+                        }
+                        100% {
+                            position: relative;
+                            z-index: 11;
+                        }
+                    }
+                }
+                &.display {
+                    display: flex;
+                }
+                &:hover {
+                    border-color: $select-border-hover-color;
+                    z-index: 12;
+                }
+                &:active,
+                &.active {
+                    border-color: $select-border-active-color;
+                    z-index: 13;
+                }
+                // No hover event at the mobile device
+                @media (pointer: coarse) {
+                    &:hover:not(:active):not(.active) {
+                        border-color: $select-border-color;
+                    }
+                    & {
+                        transition: border-color ease-in-out 0.01s;
+                    }
+                }
+
+                &::before {
+                    $width: 2.5rem;
+                    content: "";
+                    min-width: $width;
+                    width: $width;
+                    height: $width;
+                    margin: 0.5rem 1rem;
+                    display: block;
+                    background-position: center center;
+                    background-repeat: no-repeat;
+                    background-size: contain;
+                }
+                &::after {
+                    font-size: $select-font-size;
+                    display: block;
+                    width: 5em;
+                    white-space: nowrap;
+                }
+                @include icon-before;
+                @include icon-name;
+            }
+        }
+    }
+}
