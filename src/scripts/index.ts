@@ -66,9 +66,9 @@ var setStyleOptions: StyleSetParams = {
 Style.registerDefaultOpt(setStyleOptions)
 
 
-// conditon: AUTO
-if (AUTO) {
-    if (URL_PARAMS.platform && typeof PLATFORM == "string") redirect('at-platform', PLATFORM)
+// automatically redirect to platform page
+if (AUTO || URL_PARAMS.platform) {
+    if (typeof PLATFORM == "string") redirect('at-platform', PLATFORM)
 }
 
 // render Box
