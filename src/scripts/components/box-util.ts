@@ -116,6 +116,12 @@ export namespace Box {
         static DOM: HTMLElement;
     }
 
+    /**
+     * 设置值
+     * @param setPreventDefault 阻止默认事件
+     * @param detectPreventDefault 如果默认事件被阻止则不执行
+     * @param noQRCodeRender 不渲染 QRCode
+     */
     export function set(params: BoxUtilSetParams, setPreventDefault = true, detectPreventDefault = false, noQRCodeRender = false) {
         if (!noQRCodeRender) {
             if (params.qrcode && (!detectPreventDefault || !Box.QRCode.isDefaultPrevented())) {
@@ -157,9 +163,15 @@ export namespace Box {
         }
     }
 
+    /**
+     * 全部恢复默认值
+     */
     export const setDefault = (setPreventDefault = false, detectPreventDefault = true) =>
         Box.set(DEFAULT_OPTIONS, setPreventDefault, detectPreventDefault)
 
+    /**
+     * 全部恢复默认值（除 QRCode 图片）
+     */
     export const setDefaultWithoutQRCode = (setPreventDefault = false, detectPreventDefault = true) =>
         Box.set(DEFAULT_OPTIONS, setPreventDefault, detectPreventDefault, true)
 }

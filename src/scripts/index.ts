@@ -6,17 +6,19 @@ import { redirect } from "./components/redirect";
 import { DefaultLiteral, DefaultPageConfig } from "./config";
 import { handlePageConfig } from "./components/page-config";
 import { GetUrlParams } from "./components/url-params";
+import { GetStyleVariable, SetStyleVariables, Style, StyleSetParams } from "./components/style-util";
 
 export const PAGE_CONFIG = handlePageConfig(DefaultPageConfig)
 const URL_PARAMS = GetUrlParams()
 const PLATFORM = URL_PARAMS.platform || CUR_PLATFORM
 const AUTO = URL_PARAMS.auto == undefined ? PAGE_CONFIG.auto : URL_PARAMS.auto
 
+// render the HTML Element
 document.addEventListener("DOMContentLoaded", function () {
     renderBox(Boolean(AUTO || URL_PARAMS.platform))
 })
 
-var setOptions: BoxUtilSetParams = {
+var setBoxOptions: BoxUtilSetParams = {
     qrcode: IS_MOBILE ? DefaultLiteral.QRCodeContent_Mobile : DefaultLiteral.QRCodeContent_PC,
     qrcode_alt: DefaultLiteral.QRCodeAlt,
     title: {
@@ -52,21 +54,32 @@ var setOptions: BoxUtilSetParams = {
     select: PAGE_CONFIG.type == "select" ? SUPPORTED_PLATFORMS : [],
 }
 
-Box.registerDefaultOpt(setOptions)
+Box.registerDefaultOpt(setBoxOptions)
+
+var setStyleOptions: StyleSetParams = {
+    "theme-color-1": GetStyleVariable("theme-color-1"),
+    "theme-color-2": GetStyleVariable("theme-color-2"),
+    "font-color-1": GetStyleVariable("font-color-1"),
+    "font-color-2": GetStyleVariable("font-color-2")
+}
+
+Style.registerDefaultOpt(setStyleOptions)
 
 
+// conditon: AUTO
 if (AUTO) {
     if (URL_PARAMS.platform && typeof PLATFORM == "string") redirect('at-platform', PLATFORM)
 }
 
+// render Box
 document.addEventListener("DOMContentLoaded", function () {
     Box.setDefault(false, true)
 })
 
 
-// 调整手机Edge clientHeight 与 innerHeight 不一致的问题
+// Correct the conditoiin that in Mobile Edge clientHeight is not `equal` to `innerHeight`
 function justifyInnerHeight() {
-    document.documentElement.style.setProperty("--inner-height", window.innerHeight + "px")
+    SetStyleVariables("inner-height", window.innerHeight + "px")
 }
 document.addEventListener("DOMContentLoaded", justifyInnerHeight)
 window.addEventListener("resize", justifyInnerHeight)

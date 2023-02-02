@@ -15,3 +15,7 @@ export const DEFAULT_PAGE_CONFIG: PageConfigType = {
     },
     iframe_no_redirect: true
 }
+
+// Override `alert`
+const _alert = window.alert
+window.alert = (message?: any) => setTimeout(() => _alert(message), 0)

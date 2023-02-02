@@ -28,9 +28,13 @@
     src: url(@/fonts/HYQiHei-55S.ttf) format("truetype");
 }
 
-html {
+:root {
     font-size: Min(3.33vw, 16px);
     --inner-height: 100vh;
+    --theme-color-1: #{$theme-color-1};
+    --theme-color-2: #{$theme-color-2};
+    --font-color-1: #{$font-color-1};
+    --font-color-2: #{$font-color-2};
 }
 
 body {
@@ -58,13 +62,13 @@ body {
 }
 
 .theme-color-1 {
-    background-color: $theme-color-1;
-    color: $font-color-1;
+    background-color: var(--theme-color-1);
+    color: var(--font-color-1);
 }
 
 .theme-color-2 {
-    background-color: $theme-color-2;
-    color: $font-color-2;
+    background-color: var(--theme-color-2);
+    color: var(--font-color-2);
 }
 
 .container {
@@ -226,7 +230,7 @@ body {
                         border-color: $select-border-color;
                     }
                     & {
-                        transition: border-color ease-in-out 0.01s;
+                        transition: none;
                     }
                 }
 

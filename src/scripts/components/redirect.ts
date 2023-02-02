@@ -24,13 +24,18 @@ type redirectType = 'qrcode' | 'at-platform' | 'pc-select' | 'mobile-select'
 /**
  * 跳转到链接
  */
+export function redirect(url: string): void;
+/**
+ * 跳转到链接
+ */
 export function redirect(type: 'url', value: string): void;
 /**
- * 跳转或执行某个平台对应的链接或事件
- */
+* 跳转或执行某个平台对应的链接或事件
+*/
 export function redirect(type: redirectType, value: PlatformType): void;
-export function redirect(type: 'url' | redirectType, value: string) {
-    if (type == 'url') jumpToURL(value);
+export function redirect(type: 'url' | redirectType | string, value?: string) {
+    if (typeof value == 'undefined') jumpToURL(type)
+    else if (type == 'url') jumpToURL(value);
     else if (type == 'qrcode') window.location.href = QRCodeContent[value as PlatformType];
     else if (type == 'at-platform') {
         const t = AtPlatformEvent[value as PlatformType] as PaymentUriType;
@@ -52,5 +57,5 @@ export function redirect(type: 'url' | redirectType, value: string) {
             jumpToURL(t) : (DOMContentLoaded ?
                 t(value as PlatformType) :
                 document.addEventListener("DOMContentLoaded", () => t(value as PlatformType)));
-    }
+    } else throw new Error(`Unkown type "${type}"`)
 }

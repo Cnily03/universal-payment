@@ -2,6 +2,8 @@ import { CUR_PLATFORM, IS_MOBILE, PlatformType, SUPPORTED_PLATFORMS } from "./de
 import { Box } from "./box-util";
 import { StrictPageConfigType } from "./page-config";
 import { redirect } from "./redirect";
+import { Style } from "./style-util";
+import { MobileSelectClickEvent } from "../config";
 
 function node(type: StrictPageConfigType["type"], platform: PlatformType) {
     const node = document.createElement("div")
@@ -29,19 +31,24 @@ export const renderBox = (isAtPlatform = false) => {
         Box.Select.DOM.appendChild(textNode())
         // ClickEvent
         s_node.addEventListener("click", function () {
-            if (this.classList.contains("active")) { // click to vanish
+            if (this.classList.contains("active")) {
+                // click to vanish
                 this.classList.remove("active")
-                isAtPlatform && CUR_PLATFORM ?
+
+                isAtPlatform && CUR_PLATFORM ? // 支持自动跳转且位于自动跳转的界面
                     redirect("at-platform", platform) :
-                    Box.setDefault(false, false)
-            } else { // click to activate
+                    Style.setDefault(), Box.setDefault(false, false)
+            } else {
+                // click to activate
                 for (const e of (this.parentElement as HTMLElement).children)
                     e.classList.remove("active")
                 this.classList.add("active")
-                setTimeout(() => {
+                
+                Style.setDefault()
+                IS_MOBILE && typeof MobileSelectClickEvent[platform] == "string" ? // 手机端且为链接跳转
+                    Box.setDefault(false, false) :
                     Box.setDefaultWithoutQRCode(false, false)
-                    redirect(IS_MOBILE ? "mobile-select" : "pc-select", platform)
-                }, IS_MOBILE ? 10 : 0)
+                redirect(IS_MOBILE ? "mobile-select" : "pc-select", platform)
             }
         })
     }
