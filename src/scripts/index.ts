@@ -1,5 +1,5 @@
 import "../stylesheets/index.scss"
-import { BASE_URL, CUR_PLATFORM, IS_MOBILE, SUPPORTED_PLATFORMS } from "./components/declaration";
+import { BASE_URL, CUR_PLATFORM, IS_IFRAME, IS_MOBILE, SUPPORTED_PLATFORMS, Message } from "./components/declaration";
 import { Box, BoxUtilSetParams } from "./components/box-util";
 import { renderBox } from "./components/render";
 import { redirect } from "./components/redirect";
@@ -76,6 +76,38 @@ document.addEventListener("DOMContentLoaded", function () {
     Box.setDefault(false, true)
 })
 
+// Post Container Height
+document.addEventListener("DOMContentLoaded", function () {
+    const DOM = document.getElementsByClassName("container")[0]
+    const observerConfig: MutationObserverInit = {
+        attributes: true,
+        childList: true,
+        characterData: true,
+        subtree: true
+    }
+    const postContainerSize = () => {
+        if (IS_IFRAME) {
+            const { height, width } = window.getComputedStyle(DOM)
+            Message.post({
+                type: "size",
+                value: { height, width }
+            })
+        }
+    }
+    var observer = new MutationObserver((rec, obs) => {
+        postContainerSize()
+        obs.disconnect()
+        setTimeout(() => { obs.observe(DOM, observerConfig) }, 1)
+    })
+    observer.observe(DOM, observerConfig);
+    postContainerSize()
+
+    Message.receive((data) => {
+        if (data.type = "query-size") {
+            postContainerSize()
+        }
+    })
+})
 
 // Correct the conditoiin that in Mobile Edge clientHeight is not `equal` to `innerHeight`
 function justifyInnerHeight() {
