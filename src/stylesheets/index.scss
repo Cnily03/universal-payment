@@ -31,6 +31,7 @@
 :root {
     font-size: Min(3.33vw, 16px);
     --inner-height: 100vh;
+    --pay-name-max-width: 5em;
     --theme-color-1: #{$theme-color-1};
     --theme-color-2: #{$theme-color-2};
     --font-color-1: #{$font-color-1};
@@ -249,7 +250,7 @@ body {
                 &::after {
                     font-size: $select-font-size;
                     display: block;
-                    width: 5em;
+                    width: var(--pay-name-max-width);
                     white-space: nowrap;
                 }
                 @include icon-before;

@@ -2,7 +2,7 @@ import { CUR_PLATFORM, IS_MOBILE, PlatformType, SUPPORTED_PLATFORMS } from "./de
 import { Box } from "./box-util";
 import { StrictPageConfigType } from "./page-config";
 import { redirect } from "./redirect";
-import { Style } from "./style-util";
+import { SetStyleVariables, Style } from "./style-util";
 import { MobileSelectClickEvent } from "../config";
 
 function node(type: StrictPageConfigType["type"], platform: PlatformType) {
@@ -25,6 +25,7 @@ export const renderBox = (isAtPlatform = false) => {
         Box.Logo.DOM.appendChild(node("logo", platform))
         Box.Logo.DOM.appendChild(textNode())
     }
+    let pay_name_max_length = 0
     for (const platform of SUPPORTED_PLATFORMS) {
         var s_node = node("select", platform)
         Box.Select.DOM.appendChild(s_node)
@@ -43,7 +44,7 @@ export const renderBox = (isAtPlatform = false) => {
                 for (const e of (this.parentElement as HTMLElement).children)
                     e.classList.remove("active")
                 this.classList.add("active")
-                
+
                 Style.setDefault()
                 IS_MOBILE && typeof MobileSelectClickEvent[platform] == "string" ? // 手机端且为链接跳转
                     Box.setDefault(false, false) :
@@ -51,5 +52,9 @@ export const renderBox = (isAtPlatform = false) => {
                 redirect(IS_MOBILE ? "mobile-select" : "pc-select", platform)
             }
         })
+        // Name Length
+        let name_length = window.getComputedStyle(s_node, "::after").content.length - 2
+        pay_name_max_length = name_length > pay_name_max_length ? name_length : pay_name_max_length
     }
+    SetStyleVariables("pay-name-max-width", pay_name_max_length + "em")
 }
