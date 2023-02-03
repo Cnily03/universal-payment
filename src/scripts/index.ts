@@ -79,12 +79,6 @@ document.addEventListener("DOMContentLoaded", function () {
 // Post Container Height
 document.addEventListener("DOMContentLoaded", function () {
     const DOM = document.getElementsByClassName("container")[0]
-    const observerConfig: MutationObserverInit = {
-        attributes: true,
-        childList: true,
-        characterData: true,
-        subtree: true
-    }
     const postContainerSize = () => {
         if (IS_IFRAME) {
             const { height, width } = window.getComputedStyle(DOM)
@@ -94,19 +88,30 @@ document.addEventListener("DOMContentLoaded", function () {
             })
         }
     }
+
+    // Register the observer
+    const observerConfig: MutationObserverInit = {
+        attributes: true,
+        childList: true,
+        characterData: true,
+        subtree: true
+    }
     var observer = new MutationObserver((rec, obs) => {
         postContainerSize()
         obs.disconnect()
         setTimeout(() => { obs.observe(DOM, observerConfig) }, 1)
     })
     observer.observe(DOM, observerConfig);
-    postContainerSize()
 
+    // Register the message receiver
     Message.receive((data) => {
         if (data.type = "query-size") {
             postContainerSize()
         }
     })
+
+    // Repost the size
+    postContainerSize()
 })
 
 // Correct the conditoiin that in Mobile Edge clientHeight is not `equal` to `innerHeight`
