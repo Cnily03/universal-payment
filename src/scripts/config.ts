@@ -36,7 +36,7 @@ export namespace AtPlatformEvent {
     export const Alipay = "https://qr.alipay.com/fkx107738tlkf2dmserum29"
     export const WeChat = function (platform: PlatformType) {
         Box.set({
-            title: "长按识别二维码",
+            title: "请保存二维码后进行扫码",
             text: "",
             qrcode: "wxp://f2f0AY4xiChya0nbV8Eqm54019R0LwEkCWe7vH8kqAKtddI",
             qrcode_alt: platform,
@@ -92,7 +92,9 @@ export namespace MobileSelectClickEvent {
     export const Alipay = function (platform: PlatformType) {
         Style.modify("theme-color-1", ThemeColor.Alipay)
         Style.modify("font-color-2", ThemeColor.Alipay)
-        redirect("alipays://platformapi/startapp?appId=20000067&url=" + encodeURI("https://qr.alipay.com/fkx107738tlkf2dmserum29"))
+        var uri = "alipays://platformapi/startapp?appId=20000067&url=" + encodeURI("https://qr.alipay.com/fkx107738tlkf2dmserum29")
+        Box.QRCode.set(uri)
+        redirect(uri)
     }
     export const WeChat = function (platform: PlatformType) {
         Box.QRCode.set("wxp://f2f0AY4xiChya0nbV8Eqm54019R0LwEkCWe7vH8kqAKtddI").then(() => {

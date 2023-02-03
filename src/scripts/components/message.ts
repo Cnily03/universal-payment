@@ -28,7 +28,7 @@ export const registerMessageHandler = (handler: (data: MessageType) => void, onl
             try {
                 const data = JSON.parse(e.data.slice(IDENTIFIER_PREFIX.length))
                 if (typeof data["type"] == "string")
-                    handler(data as MessageType)
+                    handler.call(this, data as MessageType)
             } catch (_) { }
         }
     })

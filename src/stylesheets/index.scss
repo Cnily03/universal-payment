@@ -43,6 +43,19 @@ body {
     padding: 0;
     background-color: $background-color;
     min-height: var(--inner-height);
+    @media (pointer: fine) {
+        $scrollbar-thumb-color: invert($background-color);
+        &::-webkit-scrollbar {
+            width: 10px;
+            height: 6px;
+        }
+        &::-webkit-scrollbar-thumb {
+            background-color: rgba($scrollbar-thumb-color, 0.3);
+        }
+        &::-webkit-scrollbar-thumb:hover {
+            background-color: rgba($scrollbar-thumb-color, 0.5);
+        }
+    }
 }
 
 * {
@@ -198,7 +211,9 @@ body {
                 font-size: $select-font-size;
                 color: $select-font-color;
                 cursor: pointer;
-                transition: border-color ease-in-out 0.25s;
+                transition-property: border-color, box-shadow;
+                transition-timing-function: ease-in-out;
+                transition-duration: 0.25s;
 
                 &:not(:hover):not(:active):not(.active) {
                     animation: vanish 0.25s ease-in-out;
@@ -225,13 +240,16 @@ body {
                     border-color: $select-border-active-color;
                     z-index: 13;
                 }
+                &:active {
+                    box-shadow: 0 0 0 0.1rem rgba($select-border-active-color, 0.2);
+                }
                 // No hover event at the mobile device
                 @media (pointer: coarse) {
                     &:hover:not(:active):not(.active) {
                         border-color: $select-border-color;
                     }
                     & {
-                        transition: none;
+                        transition-duration: 0s;
                     }
                 }
 

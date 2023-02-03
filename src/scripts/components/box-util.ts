@@ -16,7 +16,11 @@ export namespace Box {
     }
 
     export class QRCode extends DefaultPreventedRecord {
-        static DOM: HTMLElement;
+        static get DOM() { return this.DOM = document.getElementById("qr-box") as HTMLElement }
+        static set DOM(value: HTMLElement) {
+            Object.defineProperty(this, "DOM", { writable: true })
+            this.DOM = value
+        }
         private static OPTIONS: QRCodeRenderersOptions = {
             errorCorrectionLevel: "H",
             margin: 2,
@@ -47,14 +51,22 @@ export namespace Box {
     }
 
     export class Title extends DefaultPreventedRecord {
-        static DOM: HTMLElement;
+        static get DOM() { return this.DOM = document.getElementById("title-box") as HTMLElement }
+        static set DOM(value: HTMLElement) {
+            Object.defineProperty(this, "DOM", { writable: true })
+            this.DOM = value
+        }
         static set(text: string) {
             return this.DOM.innerHTML = text;
         }
     }
 
     export class Text extends DefaultPreventedRecord {
-        static DOM: HTMLElement;
+        static get DOM() { return this.DOM = document.getElementById("text-box") as HTMLElement }
+        static set DOM(value: HTMLElement) {
+            Object.defineProperty(this, "DOM", { writable: true })
+            this.DOM = value
+        }
 
         static set(text: string) {
             return this.DOM.innerHTML = text;
@@ -105,15 +117,27 @@ export namespace Box {
     }
 
     export class Icon extends PlatformElementsClass {
-        static DOM: HTMLElement;
+        static get DOM() { return this.DOM = document.getElementById("icon-box") as HTMLElement }
+        static set DOM(value: HTMLElement) {
+            Object.defineProperty(this, "DOM", { writable: true })
+            this.DOM = value
+        }
     }
 
     export class Logo extends PlatformElementsClass {
-        static DOM: HTMLElement;
+        static get DOM() { return this.DOM = document.getElementById("logo-box") as HTMLElement }
+        static set DOM(value: HTMLElement) {
+            Object.defineProperty(this, "DOM", { writable: true })
+            this.DOM = value
+        }
     }
 
     export class Select extends PlatformElementsClass {
-        static DOM: HTMLElement;
+        static get DOM() { return this.DOM = document.getElementById("select-box") as HTMLElement }
+        static set DOM(value: HTMLElement) {
+            Object.defineProperty(this, "DOM", { writable: true })
+            this.DOM = value
+        }
     }
 
     /**
@@ -185,12 +209,3 @@ export type BoxUtilSetParams = {
     logo?: PlatformType | PlatformType[]
     select?: PlatformType | PlatformType[]
 }
-
-document.addEventListener("DOMContentLoaded", function () {
-    Box.QRCode.DOM = document.getElementById("qr-box") as HTMLElement
-    Box.Title.DOM = document.getElementById("title-box") as HTMLElement
-    Box.Text.DOM = document.getElementById("text-box") as HTMLElement
-    Box.Icon.DOM = document.getElementById("icon-box") as HTMLElement
-    Box.Logo.DOM = document.getElementById("logo-box") as HTMLElement
-    Box.Select.DOM = document.getElementById("select-box") as HTMLElement
-})
