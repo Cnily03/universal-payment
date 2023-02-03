@@ -80,18 +80,6 @@
         user-select: none;
     }
 
-    .modal-container .icon-cross::before {
-        background: currentColor;
-        height: 0.15rem;
-        width: 100%;
-    }
-
-    .modal-container .icon-cross::after {
-        background: currentColor;
-        height: 100%;
-        width: 0.15rem;
-    }
-
     .modal-container {
         display: flex;
         flex-direction: column;
@@ -167,6 +155,7 @@
             return this.MODAL_DOM = document.getElementById("sponsor-modal")
         },
     }
+    const windowMessageEventListeners = []
     const Message = {
         get ORIGIN() {
             DOM.IFRAME_DOM.src.match(/^(https?:\/\/)([^\/]+)/)
@@ -177,38 +166,68 @@
             target.contentWindow.postMessage(IDENTIFIER_PREFIX + JSON.stringify(data), this.ORIGIN)
         },
         receive: function (handler) {
-            window.addEventListener("message", function (e) {
+            const listener = function (e) {
                 if (typeof e.data == "string" && e.data.indexOf(IDENTIFIER_PREFIX) == 0) {
                     if (e.data) handler.call(this, JSON.parse(e.data.slice(IDENTIFIER_PREFIX.length)))
                 }
-            })
+            }
+            window.addEventListener("message", listener)
+            windowMessageEventListeners.push(listener)
         }
     }
-    Message.receive(function (data) {
-        if (data.type == "size") {
-            DOM.MODAL_DOM.style.height = data.value.height || DOM.MODAL_DOM.style.height
-            DOM.MODAL_DOM.style.width = data.value.width || DOM.MODAL_DOM.style.width
-            const { maxHeight } = window.getComputedStyle(DOM.MODAL_DOM)
-            if (data.value.height > maxHeight) DOM.IFRAME_DOM.scrolling = "yes"
-            else DOM.IFRAME_DOM.scrolling = "no"
+    function registerMessageReceiveEvent() {
+        Message.receive(function (data) {
+            if (data.type == "size") {
+                DOM.MODAL_DOM.style.height = data.value.height || DOM.MODAL_DOM.style.height
+                DOM.MODAL_DOM.style.width = data.value.width || DOM.MODAL_DOM.style.width
+                const {
+                    maxHeight
+                } = window.getComputedStyle(DOM.MODAL_DOM)
+                if (data.value.height > maxHeight) DOM.IFRAME_DOM.setAttribute("scrolling", "yes")
+                else DOM.IFRAME_DOM.setAttribute("scrolling", "no")
+            } else if (data.type = "openurl") window.location.href = data.value
+        })
+    }
+    const backupWindow = {
+        innerWidth: window.innerWidth,
+        innerHeight: window.innerHeight
+    }
+
+    function windowResizeListener() {
+        if (window.innerWidth != backupWindow.innerWidth) {
+            Message.post({
+                type: "qurey-resize"
+            })
         }
-    })
-    window.addEventListener("resize", function () {
-        DOM.MODAL_DOM.style.height = ""
-        DOM.MODAL_DOM.style.width = ""
+        window.innerWidth = backupWindow.innerWidth, window.innerHeight = backupWindow.innerHeight
+    }
+
+    const closePage = () => {
+        document.getElementById("sponsor-box").style.display = "none"
+        window.removeEventListener("resize", windowResizeListener)
+        for (const t of windowMessageEventListeners) window.removeEventListener("message", t), windowMessageEventListeners.shift()
+    }
+
+    const openPage = () => {
+        document.getElementById("sponsor-box").style.display = "flex"
+        window.addEventListener("resize", windowResizeListener)
+        registerMessageReceiveEvent()
         Message.post({
             type: "qurey-resize"
         })
-    })
+        // document.getElementById("sponsor-box").addEventListener("click", closePage)
+        document.getElementById("close-modal-btn").addEventListener("click", closePage)
+    }
 </script>
 
-<div id="sponsor-box" class="modal-container">
-    <button type="button" id="close-modal" class="modal-close-btn" title="Close">
+<button type="button" onclick="openPage()">Open</button>
+
+<div id="sponsor-box" class="modal-container" style="display: none;">
+    <button type="button" id="close-modal-btn" class="modal-close-btn" title="Close">
         <i class="c-icon c-icon-cross"></i>
     </button>
-    <script>document.getElementById("close-modal").addEventListener("click", function () { document.getElementById("sponsor-box").remove() })</script>
     <div id="sponsor-modal" class="iframe-container">
-        <iframe width="100%" height="100%" src="http://localhost:5555" referrerpolicy="origin" frameborder="0"
+        <iframe width="100%" height="100%" src="/dist" referrerpolicy="origin" frameborder="0"
             title="Sponsor Page"></iframe>
     </div>
 </div>
