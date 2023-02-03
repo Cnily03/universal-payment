@@ -145,6 +145,7 @@
 </style>
 <script>
     const IDENTIFIER_PREFIX = "[universal-payment]+"
+
     const DOM = {
         get IFRAME_DOM() {
             delete this.IFRAME_DOM
@@ -155,6 +156,7 @@
             return this.MODAL_DOM = document.getElementById("sponsor-modal")
         },
     }
+
     const windowMessageEventListeners = []
     const Message = {
         get ORIGIN() {
@@ -175,7 +177,8 @@
             windowMessageEventListeners.push(listener)
         }
     }
-    function registerMessageReceiveEvent() {
+
+    function registerMessageReceiver() {
         Message.receive(function (data) {
             if (data.type == "size") {
                 DOM.MODAL_DOM.style.height = data.value.height || DOM.MODAL_DOM.style.height
@@ -188,6 +191,7 @@
             } else if (data.type = "openurl") window.location.href = data.value
         })
     }
+
     const backupWindow = {
         innerWidth: window.innerWidth,
         innerHeight: window.innerHeight
@@ -203,21 +207,27 @@
     }
 
     const closePage = () => {
-        document.getElementById("sponsor-box").style.display = "none"
-        window.removeEventListener("resize", windowResizeListener)
+        document.getElementById("sponsor-box").style.display = "none" // Hide the page
+        window.removeEventListener("resize", windowResizeListener) // Destroy the resize listener
+        // Destroy all the message receivers (or other message listeners)
         for (const t of windowMessageEventListeners) window.removeEventListener("message", t), windowMessageEventListeners.shift()
     }
 
     const openPage = () => {
-        document.getElementById("sponsor-box").style.display = "flex"
-        window.addEventListener("resize", windowResizeListener)
-        registerMessageReceiveEvent()
+        document.getElementById("sponsor-box").style.display = "flex" // Display the page
+        window.addEventListener("resize", windowResizeListener) // Listen the resize event for justifying the modal
+        registerMessageReceiver() // Register the message Receiver
+        // Check the post again
         Message.post({
             type: "qurey-resize"
         })
+    }
+
+    window.addEventListener("DOMContentLoaded", function () {
+        // Bind click event
         // document.getElementById("sponsor-box").addEventListener("click", closePage)
         document.getElementById("close-modal-btn").addEventListener("click", closePage)
-    }
+    })
 </script>
 
 <button type="button" onclick="openPage()">Open</button>
