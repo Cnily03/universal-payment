@@ -1,0 +1,214 @@
+<style>
+    .modal-close-btn {
+        display: block;
+        position: fixed;
+        z-index: 999;
+        top: 0;
+        right: 0;
+        width: 2.5rem;
+        min-width: 2.5rem;
+        height: 2.5rem;
+        min-height: 2.5rem;
+        border: none;
+        background-color: transparent;
+        cursor: pointer;
+        font-size: 1.5rem;
+        color: #eee;
+        -webkit-transition-property: color;
+        transition-property: color;
+        -webkit-transition-duration: .2s;
+        transition-duration: .2s;
+        -webkit-transition-timing-function: ease-in-out;
+        transition-timing-function: ease-in-out
+    }
+
+    .modal-close-btn:hover,
+    .modal-close-btn:active {
+        color: #fff
+    }
+
+    .c-icon {
+        box-sizing: border-box;
+        display: inline-block;
+        font-size: inherit;
+        font-style: normal;
+        height: 1em;
+        position: relative;
+        text-indent: -9999px;
+        vertical-align: middle;
+        width: 1em
+    }
+
+    .c-icon::after,
+    .c-icon::before {
+        content: "";
+        display: block;
+        left: 50%;
+        position: absolute;
+        top: 50%;
+        transform: translate(-50%, -50%)
+    }
+
+    .c-icon-cross::after,
+    .c-icon-cross::before {
+        transform: translate(-50%, -50%) rotate(45deg);
+        border-radius: .075rem
+    }
+
+    .c-icon-cross::before {
+        width: 100%
+    }
+
+    .c-icon-cross::after {
+        height: 100%
+    }
+
+    .c-icon-cross::before {
+        background: currentColor;
+        height: .15rem;
+        width: 100%
+    }
+
+    .c-icon-cross::after {
+        background: currentColor;
+        height: 100%;
+        width: .15rem
+    }
+
+    iframe {
+        -webkit-user-select: none;
+        user-select: none;
+    }
+
+    .modal-container .icon-cross::before {
+        background: currentColor;
+        height: 0.15rem;
+        width: 100%;
+    }
+
+    .modal-container .icon-cross::after {
+        background: currentColor;
+        height: 100%;
+        width: 0.15rem;
+    }
+
+    .modal-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        position: fixed;
+        z-index: 990;
+        width: 100vw;
+        height: 100vh;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        overflow: hidden;
+        background-color: rgba(0 0 0 / 50%);
+    }
+
+    .modal-container .iframe-container {
+        display: block;
+        position: relative;
+        max-width: 92vw;
+        width: calc(30 * 16px);
+        max-height: 92vh;
+        height: calc(50 * 16px);
+        border-radius: 1.5rem;
+        overflow: hidden;
+        margin: 0 auto;
+        box-shadow: 0 0 6rem 1rem rgb(0 0 0 / 30%);
+    }
+
+    @media (pointer: fine) {
+        .modal-container .iframe-container::-webkit-scrollbar-button {
+            height: 50px;
+            width: 50px;
+            background-color: red;
+        }
+
+        .modal-container .iframe-container::-webkit-scrollbar {
+            width: 10px;
+            height: 6px;
+        }
+
+        .modal-container .iframe-container::-webkit-scrollbar-thumb {
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-container .iframe-container::-webkit-scrollbar-thumb:hover {
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+    }
+
+    .modal-container .iframe-container::before {
+        display: block;
+        position: absolute;
+        z-index: 992;
+        content: '';
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        box-shadow: 0 -0.35rem 1.25rem 0.4rem rgb(0 0 0 / 30%) inset;
+        pointer-events: none;
+    }
+</style>
+<script>
+    const IDENTIFIER_PREFIX = "[universal-payment]+"
+    const DOM = {
+        get IFRAME_DOM() {
+            delete this.IFRAME_DOM
+            return this.IFRAME_DOM = document.getElementById("sponsor-modal").getElementsByTagName("iframe")[0]
+        },
+        get MODAL_DOM() {
+            delete this.MODAL_DOM
+            return this.MODAL_DOM = document.getElementById("sponsor-modal")
+        },
+    }
+    const Message = {
+        get ORIGIN() {
+            DOM.IFRAME_DOM.src.match(/^(https?:\/\/)([^\/]+)/)
+            delete this.ORIGIN
+            return this.ORIGIN = RegExp.$1 + RegExp.$2
+        },
+        post: function (data, target = DOM.IFRAME_DOM) {
+            target.contentWindow.postMessage(IDENTIFIER_PREFIX + JSON.stringify(data), this.ORIGIN)
+        },
+        receive: function (handler) {
+            window.addEventListener("message", function (e) {
+                if (typeof e.data == "string" && e.data.indexOf(IDENTIFIER_PREFIX) == 0) {
+                    if (e.data) handler.call(this, JSON.parse(e.data.slice(IDENTIFIER_PREFIX.length)))
+                }
+            })
+        }
+    }
+    Message.receive(function (data) {
+        if (data.type == "size") {
+            DOM.MODAL_DOM.style.height = data.value.height || DOM.MODAL_DOM.style.height
+            DOM.MODAL_DOM.style.width = data.value.width || DOM.MODAL_DOM.style.width
+            const { maxHeight } = window.getComputedStyle(DOM.MODAL_DOM)
+            if (data.value.height > maxHeight) DOM.IFRAME_DOM.scrolling = "yes"
+            else DOM.IFRAME_DOM.scrolling = "no"
+        }
+    })
+    window.addEventListener("resize", function () {
+        DOM.MODAL_DOM.style.height = ""
+        DOM.MODAL_DOM.style.width = ""
+        Message.post({
+            type: "qurey-resize"
+        })
+    })
+</script>
+
+<div id="sponsor-box" class="modal-container">
+    <button type="button" id="close-modal" class="modal-close-btn" title="Close">
+        <i class="c-icon c-icon-cross"></i>
+    </button>
+    <script>document.getElementById("close-modal").addEventListener("click", function () { document.getElementById("sponsor-box").remove() })</script>
+    <div id="sponsor-modal" class="iframe-container">
+        <iframe width="100%" height="100%" src="http://localhost:5555" referrerpolicy="origin" frameborder="0"
+            title="Sponsor Page"></iframe>
+    </div>
+</div>
