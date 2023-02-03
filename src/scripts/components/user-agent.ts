@@ -12,5 +12,5 @@ export function getSupportPlaforms() {
 }
 
 export function isMobile() {
-    return /mobile|android|iphone/.test(navigator.userAgent.toLowerCase())
+    return /mobile|android|iphone/i.test(navigator.userAgent)
 }
