@@ -24,8 +24,9 @@ export namespace Box {
         export const image = "image"
         export const img = "image"
     }
-    type QRCodeParamType = keyof typeof QRCodeParamTypeMap
-    type FinalQRCODEParamType = (typeof QRCodeParamTypeMap)[QRCodeParamType]
+    type PureQRCodeParamType = keyof typeof QRCodeParamTypeMap
+    type QRCodeParamType = PureQRCodeParamType | `!${PureQRCodeParamType}`
+    type FinalQRCodeParamType = (typeof QRCodeParamTypeMap)[PureQRCodeParamType]
 
     export class QRCode extends DefaultPreventedRecord {
         static get DOM() { return this.DOM = document.getElementById("qr-box") as HTMLElement }
@@ -42,16 +43,17 @@ export namespace Box {
             }
         }
         private static async getImageURI(str: string, type: QRCodeParamType) {
+            if (type.startsWith("!")) type = type.slice(1) as PureQRCodeParamType
             if (!Object.keys(QRCodeParamTypeMap).includes(type)) type = "content"
-            type = QRCodeParamTypeMap[type]
-            if (type == "content") {
+            var finalType: FinalQRCodeParamType = QRCodeParamTypeMap[type as PureQRCodeParamType]
+            if (finalType == "content") {
                 return await this.base64(str)
-            } else if (type == "image") {
+            } else if (finalType == "image") {
                 return str
             }
             return str
         }
-        public static async base64(text: string) {
+        private static async base64(text: string) {
             return qrcode.toDataURL(text, { type: "image/png", ...this.OPTIONS })
         }
         private static async canvas(text: string, canvas?: HTMLCanvasElement) {
@@ -60,14 +62,15 @@ export namespace Box {
         }
         /**
          * 设置二维码内容
-         * @param type 默认为 `auto`，会采取 `text` 开头以 `[]` 括起来的内容作为类型，所有 fallback 类型均为 `content`
+         * @param type 默认为 `auto`，会采取 `text` 开头以 `[]` 括起来的内容作为类型，如果开头带有感叹号 `!`，表示生成的 QRCode 的缩放将不会采用像素化的方式。所有 fallback 类型均为 `content`
          */
-        static async set(text: string, type: "auto" | QRCodeParamType = "auto") {
+        static async set(text: string, type: "auto" | QRCodeParamType = "auto", cancelPixelated?: boolean) {
             if (type == "auto") {
                 var splited = /^\[(.+)\](.+)$/.exec(text) || []
                 var _type = splited[1] || "content"
+                if (typeof cancelPixelated == "undefined") cancelPixelated = _type.startsWith("!")
                 text = splited[2] || text
-                if (!Object.keys(QRCodeParamTypeMap).includes(_type)) type = "content"
+                if (!Object.keys(QRCodeParamTypeMap).includes(_type.startsWith("!") ? _type.slice(1) : _type)) type = "content"
                 else type = _type as QRCodeParamType
             }
             const srcUri = await this.getImageURI(text, type)
@@ -76,12 +79,20 @@ export namespace Box {
                     .addEventListener("load", function _loadListener() {
                         resolve(true)
                         this.removeEventListener("load", _loadListener)
+                        if (cancelPixelated) QRCode.cancelPixelated()
+                        else this.style.imageRendering = ""
                     })
                 this.DOM.getElementsByTagName("img")[0].src = srcUri
             })
         }
         static changeAlt(text: string) {
             return this.Alt.set(text)
+        }
+        /**
+         * 暂时取消像素化放大
+         */
+        static cancelPixelated() {
+            this.DOM.getElementsByTagName("img")[0].style.imageRendering = "auto"
         }
         static Alt = class extends DefaultPreventedRecord {
             static set(text: string) {
@@ -189,7 +200,7 @@ export namespace Box {
     export function set(params: BoxUtilSetParams, setPreventDefault = true, detectPreventDefault = false, noQRCodeRender = false) {
         if (!noQRCodeRender) {
             if (params.qrcode && (!detectPreventDefault || !Box.QRCode.isDefaultPrevented())) {
-                Box.QRCode.set(params.qrcode)
+                Box.QRCode.set(params.qrcode, "auto", typeof params.qrcode_pixelated == "undefined" ? undefined : !params.qrcode_pixelated)
                 if (setPreventDefault) Box.QRCode.preventDefault()
             }
         }
@@ -243,6 +254,7 @@ export namespace Box {
 export type BoxUtilSetParams = {
     qrcode?: string
     qrcode_alt?: string
+    qrcode_pixelated?: boolean,
     title?: string
     text?: string
     icon?: PlatformType | PlatformType[]

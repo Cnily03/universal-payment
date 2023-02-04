@@ -17,7 +17,7 @@ export const FINAL_CONFIG: StrictPageConfigType = {
     type: URL_PARAMS.type == undefined ? PAGE_CONFIG.type : URL_PARAMS.type
 }
 
-// render the HTML Element
+// Render the HTML Element
 document.addEventListener("DOMContentLoaded", function () {
     renderBox(Boolean(FINAL_CONFIG.auto || URL_PARAMS.platform))
 })
@@ -25,6 +25,7 @@ document.addEventListener("DOMContentLoaded", function () {
 var setBoxOptions: BoxUtilSetParams = {
     qrcode: IS_MOBILE ? DefaultLiteral.QRCodeContent_Mobile : DefaultLiteral.QRCodeContent_PC,
     qrcode_alt: DefaultLiteral.QRCodeAlt,
+    qrcode_pixelated: true,
     title: {
         "icon": {
             pc: DefaultLiteral.Title_PC,
@@ -70,12 +71,12 @@ var setStyleOptions: StyleSetParams = {
 Style.registerDefaultOpt(setStyleOptions)
 
 
-// automatically redirect to platform page
+// Automatically redirect to platform page
 if (FINAL_CONFIG.auto || URL_PARAMS.platform) {
     if (typeof PLATFORM == "string") redirect('at-platform', PLATFORM)
 }
 
-// render Box
+// Render Box
 document.addEventListener("DOMContentLoaded", function () {
     Box.setDefault(false, true)
 })

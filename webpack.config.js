@@ -49,7 +49,7 @@ module.exports = {
             test: /\.(png|jpe?g|svg|gif|webp)$/i,
             type: 'asset',
             generator: {
-                filename: 'images/[name][ext][query]'
+                filename: 'images/[hash][ext][query]'
             },
             parser: {
                 dataUrlCondition: {
@@ -60,7 +60,7 @@ module.exports = {
             test: /\.(ttf|eot|woff2?)$/i,
             type: 'asset',
             generator: {
-                filename: '[name][ext][query]'
+                filename: '[hash][ext][query]'
             },
             parser: {
                 dataUrlCondition: {
