@@ -6,6 +6,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const TerserWebpackPlugin = require("terser-webpack-plugin");
 const FontSpiderPlugin = require('font-spider-webpack-plugin')
+// const CopyWebpackPlugin = require('copy-webpack-plugin');
 // const InlineChunkHtmlPlugin = require('react-dev-utils/InlineChunkHtmlPlugin');
 
 const StyleLoader = MiniCssExtractPlugin.loader || 'style-loader';
@@ -35,35 +36,35 @@ module.exports = {
 
     module: {
         rules: [{ // TypeScript
-            test: /\.tsx?$/,
+            test: /\.tsx?$/i,
             use: 'ts-loader',
             exclude: /node_modules/
         }, { // CSS
-            test: /\.css$/,
+            test: /\.css$/i,
             use: [StyleLoader, 'css-loader']
         }, { // SCSS
-            test: /\.s[ac]ss$/,
+            test: /\.s[ac]ss$/i,
             use: [StyleLoader, 'css-loader', 'sass-loader', ]
         }, { // Image File
-            test: /\.(png|jpe?g|svg|gif)$/,
+            test: /\.(png|jpe?g|svg|gif|webp)$/i,
             type: 'asset',
             generator: {
-                filename: 'image/[name][ext][query]'
+                filename: 'images/[name][ext][query]'
             },
             parser: {
                 dataUrlCondition: {
-                    maxSize: 8 * 1024 // 限制于 8kb
+                    maxSize: 32 * 1024 // 限制大小（单位：字节）
                 }
             }
         }, { // Font File
-            test: /\.(ttf|eot|woff2?)$/,
+            test: /\.(ttf|eot|woff2?)$/i,
             type: 'asset',
             generator: {
                 filename: '[name][ext][query]'
             },
             parser: {
                 dataUrlCondition: {
-                    maxSize: 32 * 1024 // 限制于 8kb
+                    maxSize: 32 * 1024 // 限制大小（单位：字节）
                 }
             }
         }]
@@ -78,7 +79,13 @@ module.exports = {
             scriptLoading: 'blocking'
         }),
         new MiniCssExtractPlugin(), // 单独提取 CSS
-        // new InlineChunkHtmlPlugin(HtmlWebpackPlugin, [/\.(js)$/]) // Inline JS
+        // new InlineChunkHtmlPlugin(HtmlWebpackPlugin, [/\.(js)$/i]) // Inline JS
+        // new CopyWebpackPlugin({
+        //     patterns: [{
+        //         from: path.resolve(__dirname, './src/public'),
+        //         to: path.resolve(__dirname, './dist/public')
+        //     }],
+        // })
     ].concat(IS_DEV ? [ // 仅在开发环境
 
     ] : [ // 仅在生产环境
