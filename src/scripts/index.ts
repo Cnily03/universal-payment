@@ -4,18 +4,22 @@ import { Box, BoxUtilSetParams } from "./components/box-util";
 import { renderBox } from "./components/render";
 import { redirect } from "./components/redirect";
 import { DefaultLiteral, DefaultPageConfig } from "./config";
-import { handlePageConfig } from "./components/page-config";
+import { StrictPageConfigType, handlePageConfig } from "./components/page-config";
 import { GetUrlParams } from "./components/url-params";
 import { GetStyleVariable, SetStyleVariables, Style, StyleSetParams } from "./components/style-util";
 
-export const PAGE_CONFIG = handlePageConfig(DefaultPageConfig)
+const PAGE_CONFIG = handlePageConfig(DefaultPageConfig)
 const URL_PARAMS = GetUrlParams()
 const PLATFORM = URL_PARAMS.platform || CUR_PLATFORM
-const AUTO = URL_PARAMS.auto == undefined ? PAGE_CONFIG.auto : URL_PARAMS.auto
+export const FINAL_CONFIG: StrictPageConfigType = {
+    ...PAGE_CONFIG,
+    auto: URL_PARAMS.auto == undefined ? PAGE_CONFIG.auto : URL_PARAMS.auto,
+    type: URL_PARAMS.type == undefined ? PAGE_CONFIG.type : URL_PARAMS.type
+}
 
 // render the HTML Element
 document.addEventListener("DOMContentLoaded", function () {
-    renderBox(Boolean(AUTO || URL_PARAMS.platform))
+    renderBox(Boolean(FINAL_CONFIG.auto || URL_PARAMS.platform))
 })
 
 var setBoxOptions: BoxUtilSetParams = {
@@ -34,7 +38,7 @@ var setBoxOptions: BoxUtilSetParams = {
             pc: DefaultLiteral.TitleSelect_PC,
             mobile: DefaultLiteral.TitleSelect_Mobile
         }
-    }[PAGE_CONFIG.type][IS_MOBILE ? "mobile" : "pc"],
+    }[FINAL_CONFIG.type][IS_MOBILE ? "mobile" : "pc"],
     text: {
         "icon": {
             pc: DefaultLiteral.Text_PC,
@@ -48,10 +52,10 @@ var setBoxOptions: BoxUtilSetParams = {
             pc: DefaultLiteral.TextSelect_PC,
             mobile: DefaultLiteral.TextSelect_Mobile
         }
-    }[PAGE_CONFIG.type][IS_MOBILE ? "mobile" : "pc"],
-    icon: PAGE_CONFIG.type == "icon" ? SUPPORTED_PLATFORMS : [],
-    logo: PAGE_CONFIG.type == "logo" ? SUPPORTED_PLATFORMS : [],
-    select: PAGE_CONFIG.type == "select" ? SUPPORTED_PLATFORMS : [],
+    }[FINAL_CONFIG.type][IS_MOBILE ? "mobile" : "pc"],
+    icon: FINAL_CONFIG.type == "icon" ? SUPPORTED_PLATFORMS : [],
+    logo: FINAL_CONFIG.type == "logo" ? SUPPORTED_PLATFORMS : [],
+    select: FINAL_CONFIG.type == "select" ? SUPPORTED_PLATFORMS : [],
 }
 
 Box.registerDefaultOpt(setBoxOptions)
@@ -67,7 +71,7 @@ Style.registerDefaultOpt(setStyleOptions)
 
 
 // automatically redirect to platform page
-if (AUTO || URL_PARAMS.platform) {
+if (FINAL_CONFIG.auto || URL_PARAMS.platform) {
     if (typeof PLATFORM == "string") redirect('at-platform', PLATFORM)
 }
 

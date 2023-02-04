@@ -4,11 +4,13 @@ import { PlatformType, getPlatform, getSupportPlaforms, isMobile } from "./user-
 export { PlatformType, PageConfigType, Message }
 
 export const SUPPORTED_PLATFORMS = getSupportPlaforms()
-export const IS_MOBILE = isMobile()
 export const CUR_PLATFORM = getPlatform()
 export const BASE_URL = window.location.origin + window.location.pathname
 
+export const IS_MOBILE = isMobile()
 export const IS_IFRAME = isIframe()
+Object.defineProperty(this, "IS_MOBILE", { get: isMobile });
+Object.defineProperty(this, "IS_IFRAME", { get: isIframe });
 
 export const DEFAULT_PAGE_CONFIG: PageConfigType = {
     auto: true,
@@ -21,4 +23,4 @@ export const DEFAULT_PAGE_CONFIG: PageConfigType = {
 
 // Override `alert`
 const _alert = window.alert
-window.alert = (message?: any) => setTimeout(() => _alert(message), 0)
+window.alert = (message?: any) => setTimeout(() => _alert(message), 1)

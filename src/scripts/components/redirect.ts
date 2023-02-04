@@ -1,4 +1,4 @@
-import { PAGE_CONFIG } from "..";
+import { FINAL_CONFIG } from "..";
 import { AtPlatformEvent, MobileSelectClickEvent, PCSelectClickEvent, QRCodeContent } from "../config";
 import { Box } from "./box-util";
 import { IS_IFRAME, PlatformType, Message } from "./declaration";
@@ -7,7 +7,7 @@ type PaymentUriType = string | ((platform?: string) => any)
 type CallAppUriType = string | ((platform?: string) => any)
 
 function jumpToURL(url: string) {
-    if (PAGE_CONFIG.iframe_no_redirect && IS_IFRAME) {
+    if (FINAL_CONFIG.iframe_no_redirect && IS_IFRAME) {
         Message.post({
             type: "openurl",
             value: url
