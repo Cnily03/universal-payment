@@ -15,6 +15,18 @@ export namespace Box {
         DEFAULT_OPTIONS = options
     }
 
+    namespace QRCodeParamTypeMap {
+        export const content = "content"
+        export const url = "content"
+        export const uri = "content"
+        export const link = "content"
+        export const lnk = "content"
+        export const image = "image"
+        export const img = "image"
+    }
+    type QRCodeParamType = keyof typeof QRCodeParamTypeMap
+    type FinalQRCODEParamType = (typeof QRCodeParamTypeMap)[QRCodeParamType]
+
     export class QRCode extends DefaultPreventedRecord {
         static get DOM() { return this.DOM = document.getElementById("qr-box") as HTMLElement }
         static set DOM(value: HTMLElement) {
@@ -29,16 +41,44 @@ export namespace Box {
                 light: "#FFF"
             }
         }
-        static async base64(text: string) {
+        private static async getImageURI(str: string, type: QRCodeParamType) {
+            if (!Object.keys(QRCodeParamTypeMap).includes(type)) type = "content"
+            type = QRCodeParamTypeMap[type]
+            if (type == "content") {
+                return await this.base64(str)
+            } else if (type == "image") {
+                return str
+            }
+            return str
+        }
+        public static async base64(text: string) {
             return qrcode.toDataURL(text, { type: "image/png", ...this.OPTIONS })
         }
-        static async canvas(text: string, canvas?: HTMLCanvasElement) {
+        private static async canvas(text: string, canvas?: HTMLCanvasElement) {
             if (canvas) return qrcode.toCanvas(canvas, text, this.OPTIONS)
             else return qrcode.toCanvas(text, this.OPTIONS)
         }
-        static async set(text: string) {
-            const b64URL = await this.base64(text)
-            this.DOM.getElementsByTagName("img")[0].src = b64URL
+        /**
+         * 设置二维码内容
+         * @param type 默认为 `auto`，会采取 `text` 开头以 `[]` 括起来的内容作为类型，所有 fallback 类型均为 `content`
+         */
+        static async set(text: string, type: "auto" | QRCodeParamType = "auto") {
+            if (type == "auto") {
+                var splited = /^\[(.+)\](.+)$/.exec(text) || []
+                var _type = splited[1] || "content"
+                text = splited[2] || text
+                if (!Object.keys(QRCodeParamTypeMap).includes(_type)) type = "content"
+                else type = _type as QRCodeParamType
+            }
+            const srcUri = await this.getImageURI(text, type)
+            await new Promise(resolve => {
+                this.DOM.getElementsByTagName("img")[0]
+                    .addEventListener("load", function _loadListener() {
+                        resolve(true)
+                        this.removeEventListener("load", _loadListener)
+                    })
+                this.DOM.getElementsByTagName("img")[0].src = srcUri
+            })
         }
         static changeAlt(text: string) {
             return this.Alt.set(text)
