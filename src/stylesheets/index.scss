@@ -43,10 +43,11 @@ body {
     padding: 0;
     background-color: $background-color;
     min-height: var(--inner-height);
+    overflow: overlay;
     @media (pointer: fine) {
         $scrollbar-thumb-color: invert($background-color);
         &::-webkit-scrollbar {
-            width: 10px;
+            width: 6px;
             height: 6px;
         }
         &::-webkit-scrollbar-thumb {
