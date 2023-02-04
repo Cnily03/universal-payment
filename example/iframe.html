@@ -160,9 +160,9 @@
     const windowMessageEventListeners = []
     const Message = {
         get ORIGIN() {
-            DOM.IFRAME_DOM.src.match(/^(https?:\/\/)([^\/]+)/)
+            var splited = /^(https?:\/\/)([^\/]+)/.exec(DOM.IFRAME_DOM.src)
             delete this.ORIGIN
-            return this.ORIGIN = RegExp.$1 + RegExp.$2
+            return this.ORIGIN = splited[1] + splited[2]
         },
         post: function (data, target = DOM.IFRAME_DOM) {
             target.contentWindow.postMessage(IDENTIFIER_PREFIX + JSON.stringify(data), this.ORIGIN)
