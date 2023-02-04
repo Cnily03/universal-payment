@@ -197,10 +197,10 @@ export namespace Box {
      * @param detectPreventDefault 如果默认事件被阻止则不执行
      * @param noQRCodeRender 不渲染 QRCode
      */
-    export function set(params: BoxUtilSetParams, setPreventDefault = true, detectPreventDefault = false, noQRCodeRender = false) {
+    export async function set(params: BoxUtilSetParams, setPreventDefault = true, detectPreventDefault = false, noQRCodeRender = false) {
         if (!noQRCodeRender) {
             if (params.qrcode && (!detectPreventDefault || !Box.QRCode.isDefaultPrevented())) {
-                Box.QRCode.set(params.qrcode, "auto", typeof params.qrcode_pixelated == "undefined" ? undefined : !params.qrcode_pixelated)
+                await Box.QRCode.set(params.qrcode, "auto", typeof params.qrcode_pixelated == "undefined" ? undefined : !params.qrcode_pixelated)
                 if (setPreventDefault) Box.QRCode.preventDefault()
             }
         }

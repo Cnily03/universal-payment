@@ -100,25 +100,33 @@ export namespace MobileSelectClickEvent {
         Style.modify("theme-color-1", ThemeColor.Alipay)
         Style.modify("font-color-2", ThemeColor.Alipay)
         var uri = "alipays://platformapi/startapp?appId=20000067&url=" + encodeURI(Template.Alipay)
-        Box.QRCode.set(uri)
+        Box.set({
+            qrcode: Template.Alipay,
+            qrcode_alt: platform
+        })
         redirect(uri)
     }
     export const WeChat = function (platform: PlatformType) {
-        Box.QRCode.set(Template.WeChat).then(() => {
+        Box.set({
+            qrcode: Template.WeChat,
+            qrcode_alt: platform
+        }).then(() => {
             Style.modify("theme-color-1", ThemeColor.WeChat)
             Style.modify("font-color-2", ThemeColor.WeChat)
             if (IS_MOBILE) alert("请保存二维码后使用微信扫码")
         })
     }
     export const QQ = function (platform: PlatformType) {
-        Box.QRCode.set(Template.QQ).then(() => {
+        Box.set({
+            qrcode: Template.QQ,
+            qrcode_alt: platform
+        }).then(() => {
             Style.modify("theme-color-1", ThemeColor.QQ)
             Style.modify("font-color-2", ThemeColor.QQ)
             if (IS_MOBILE) alert("请保存二维码后使用 QQ 扫码")
         })
     }
 }
-
 
 
 // ========== 默认页面配置 ==========
