@@ -40,7 +40,7 @@ export namespace AtPlatformEvent {
     export const Alipay = Template.Alipay
     export const WeChat = function (platform: PlatformType) {
         Box.set({
-            title: (/^\[(image|img)\].+$/.exec(Template.WeChat) || [])[0] ? "长按识别二维码" : "请保存二维码后进行扫码",
+            title: (/^\[\!?(image|img)\].+$/.exec(Template.WeChat) || [])[0] ? "长按识别二维码" : "请保存二维码后进行扫码",
             text: "",
             qrcode: Template.WeChat,
             qrcode_alt: platform,

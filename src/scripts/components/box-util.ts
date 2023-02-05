@@ -200,8 +200,8 @@ export namespace Box {
     export async function set(params: BoxUtilSetParams, setPreventDefault = true, detectPreventDefault = false, noQRCodeRender = false) {
         if (!noQRCodeRender) {
             if (params.qrcode && (!detectPreventDefault || !Box.QRCode.isDefaultPrevented())) {
-                await Box.QRCode.set(params.qrcode, "auto", typeof params.qrcode_pixelated == "undefined" ? undefined : !params.qrcode_pixelated)
                 if (setPreventDefault) Box.QRCode.preventDefault()
+                await Box.QRCode.set(params.qrcode, "auto", typeof params.qrcode_pixelated == "undefined" ? undefined : !params.qrcode_pixelated)
             }
         }
         if ((params.qrcode_alt || params.qrcode_alt == "") && (!detectPreventDefault || !Box.QRCode.Alt.isDefaultPrevented())) {
