@@ -18,7 +18,7 @@ Demo: [pay.cnily.top](https://pay.cnily.top)
 
 3. 安装 Node.js 和 npm 并执行下列命令
 
-    ```
+    ```bash
     npm install
     npm run build
     ```
@@ -32,7 +32,7 @@ Demo: [pay.cnily.top](https://pay.cnily.top)
 
 ## 开发
 
-文本和链接配置位于 `src/scripts/config.ts` 文件
+`src/template.js` 仅为模板，更多文本和链接配置（详细配置）详见 `src/scripts/config.ts` 文件
 
 图标和相应配置位于 `src/icon` 文件夹
 
@@ -41,4 +41,5 @@ Demo: [pay.cnily.top](https://pay.cnily.top)
 ### URL 参数
 
 - `auto` 是否开启自动识别 UserAgent 并跳转相应支付平台的网页
-- `platform` 显示指定支付平台
+- `platform` 显示指定支付平台，可选值为详细配置中正则匹配的常量名，区分大小写
+- `type` 显示指定支付平台显示的方式，具有以下可选值 `icon`|`logo`|`select`
